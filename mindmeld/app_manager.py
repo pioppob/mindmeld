@@ -128,13 +128,14 @@ class ApplicationManager:
         # TODO: make an async nlp
         self.nlp.load()
 
-    def _pre_dm(self, processed_query, context, params, frame, history):
+    def _pre_dm(self, processed_query, context, params, frame, history, incoming_source):
         # We pass in the previous turn's responder's params to the current request
         request = self.request_class(
             context=context,
             history=history,
             frame=frame,
             params=params,
+            incoming_source=incoming_source
             **processed_query
         )
 
@@ -150,7 +151,7 @@ class ApplicationManager:
         return request, response
 
     def parse(
-        self, text, params=None, context=None, frame=None, history=None, verbose=False
+        self, text, params=None, context=None, frame=None, history=None, verbose=False, incoming_source=None
     ):
         """
         Args:
@@ -188,12 +189,14 @@ class ApplicationManager:
                 frame=frame,
                 history=history,
                 verbose=verbose,
+                incoming_source=incoming_source
             )
 
         params = freeze_params(params)
         history = history or []
         frame = frame or {}
         context = context or {}
+        incoming_source = incoming_source or {}
 
         allowed_intents, nlp_params, dm_params = self._pre_nlp(params, verbose)
         processed_query = self.nlp.process(
@@ -205,6 +208,7 @@ class ApplicationManager:
             history=history,
             frame=frame,
             params=params,
+            incoming_source=incoming_source
         )
 
         dm_responder = self.dialogue_manager.apply_handler(
@@ -214,7 +218,7 @@ class ApplicationManager:
         return modified_dm_responder
 
     async def _parse_async(
-        self, text, params=None, context=None, frame=None, history=None, verbose=False
+        self, text, params=None, context=None, frame=None, history=None, verbose=False, incoming_source=None
     ):
         """
         Args:
@@ -247,6 +251,7 @@ class ApplicationManager:
         context = context or {}
         history = history or []
         frame = frame or {}
+        incoming_source = incoming_source or {}
 
         allowed_intents, nlp_params, dm_params = self._pre_nlp(params, verbose)
         # TODO: make an async nlp
@@ -259,6 +264,7 @@ class ApplicationManager:
             history=history,
             frame=frame,
             params=params,
+            incoming_source=incoming_source
         )
 
         dm_responder = await self.dialogue_manager.apply_handler(
