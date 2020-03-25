@@ -135,7 +135,7 @@ class ApplicationManager:
             history=history,
             frame=frame,
             params=params,
-            incoming_source=incoming_source
+            incoming_source=incoming_source,
             **processed_query
         )
 
