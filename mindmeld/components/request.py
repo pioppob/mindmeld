@@ -309,6 +309,7 @@ class Request:
     history = attr.ib(default=attr.Factory(tuple), converter=tuple)
     text = attr.ib(default=None)
     incoming_source = attr.ib(default=None)
+    convoData = attr.ib(default=None)
     frame = attr.ib(default=immutables.Map(), converter=immutables.Map)
     params = attr.ib(default=FrozenParams())
     context = attr.ib(default=immutables.Map(), converter=immutables.Map)
